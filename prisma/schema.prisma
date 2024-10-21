@@ -4,6 +4,8 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
+// schema.prisma
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,11 +16,37 @@ datasource db {
 }
 
 model User {
-  id       Int     @id @default(autoincrement())
-  email    String  @unique
-  pseudo   String?
-  firstName String?
-  lastName  String?
-  password String
-  role     String  @default("user")
+  id            Int            @id @default(autoincrement())
+  email         String         @unique
+  pseudo        String?
+  firstName     String?
+  lastName      String?
+  password      String
+  role          String         @default("user")
+  registrations Registration[]
+  meetings      Meeting[]      @relation("UserMeetings")
 }
+
+model Meeting {
+  id            Int            @id @default(autoincrement())
+  title         String
+  description   String?
+  date          DateTime
+  location      String?
+  capacity      Int?
+  creatorId     Int
+  creator       User           @relation(fields: [creatorId], references: [id], name: "UserMeetings")
+  registrations Registration[]
+  image         String?
+}
+
+model Registration {
+  id        Int     @id @default(autoincrement())
+  userId    Int
+  meetingId Int
+  user      User    @relation(fields: [userId], references: [id])
+  meeting   Meeting @relation(fields: [meetingId], references: [id])
+
+  @@unique([userId, meetingId])
+}
+
