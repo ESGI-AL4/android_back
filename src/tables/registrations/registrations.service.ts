@@ -1,8 +1,8 @@
 // src/registrations/registrations.service.ts
 
 import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { CreateRegistrationDto } from '../DTO/create-registration.dto';
+import { PrismaService } from '../../prisma/prisma.service';
+import { CreateRegistrationDto } from '../../DTO/registration/create-registration.dto';
 
 @Injectable()
 export class RegistrationsService {

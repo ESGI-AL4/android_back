@@ -1,9 +1,9 @@
 // src/meetings/meetings.service.ts
 
 import { Injectable, ForbiddenException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { CreateMeetingDto } from '../DTO/create-meeting.dto';
-import { UpdateMeetingDto } from '../DTO/update-meeting.dto';
+import { PrismaService } from '../../prisma/prisma.service';
+import { CreateMeetingDto } from '../../DTO/meeting/create-meeting.dto';
+import { UpdateMeetingDto } from '../../DTO/meeting/update-meeting.dto';
 
 @Injectable()
 export class MeetingsService {

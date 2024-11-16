@@ -3,9 +3,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
 import { PrismaService } from './prisma/prisma.service';
-import { UsersModule } from './users/users.module';
-import { MeetingsModule } from './meetings/meetings.module';
-import { RegistrationsModule } from './registrations/registrations.module';
+import { UsersModule } from './tables/users/users.module';
+import { MeetingsModule } from './tables/meetings/meetings.module';
+import { RegistrationsModule } from './tables/registrations/registrations.module';
 
 @Module({
   imports: [PrismaModule, UsersModule, MeetingsModule, RegistrationsModule],
