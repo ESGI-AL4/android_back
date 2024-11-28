@@ -4,7 +4,7 @@ services:
       - livraison_my_network
     build:
       context: .
-      target: prods
+      target: prod
       dockerfile: Dockerfile
     tty: true
     stdin_open: true
