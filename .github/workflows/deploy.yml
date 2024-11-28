@@ -33,6 +33,7 @@ jobs:
       POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
       POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+      PORT: ${{ secrets.PORT }}
       DATABASE_URL: postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@db:5432/${{ secrets.POSTGRES_DB }}
 
     steps:
@@ -57,6 +58,7 @@ jobs:
             export POSTGRES_PASSWORD=${{ env.POSTGRES_PASSWORD }}
             export POSTGRES_DB=${{ env.POSTGRES_DB }}
             export DATABASE_URL=${{ env.DATABASE_URL }}
+            export PORT=${{ env.PORT }}
             docker stop android_back-api-server
             docker system prune -af --volumes
             docker compose -f "docker-compose.prod.yaml" up -d --build
