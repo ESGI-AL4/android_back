@@ -1,5 +1,6 @@
 services:
   db:
+    container_name: postgres:14.1-alpine
     image: postgres:14.1-alpine
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
@@ -37,6 +38,7 @@ services:
         condition: service_healthy
 
   adminer:
+    container_name : adminer
     image: adminer
     restart: unless-stopped
     ports:
