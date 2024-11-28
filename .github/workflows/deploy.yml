@@ -49,4 +49,4 @@ jobs:
             cp ../env/android_back/.env .env
             docker stop android_back-api-server
             docker system prune -af --volumes
-            docker compose -f "docker-compose.prod.yaml" up -d --build --no-recreate
+            docker compose -f "docker-compose.prod.yaml" up -d --build
