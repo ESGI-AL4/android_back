@@ -12,9 +12,9 @@ import {
   Req,
 } from '@nestjs/common';
 import { MeetingsService } from './meetings.service';
-import { CreateMeetingDto } from '../../DTO/meeting/create-meeting.dto';
-import { UpdateMeetingDto } from '../../DTO/meeting/update-meeting.dto';
-import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
+import { CreateMeetingDto } from './dto/create-meeting.dto';
+import { UpdateMeetingDto } from './dto/update-meeting.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('meetings')

@@ -1,37 +1,39 @@
 // src/auth/auth.service.ts
 
-import { Injectable } from '@nestjs/common';
-import { UsersService } from '../tables/users/users.service';
-import * as bcrypt from 'bcrypt';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service'
 import { JwtService } from '@nestjs/jwt';
+import { AuthEntity } from './entity/auth.entity';
+import * as bcrypt from 'bcrypt';
+
 
 @Injectable()
 export class AuthService {
   constructor(
-    private usersService: UsersService,
+    private prisma: PrismaService,
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(email: string, pass: string): Promise<any> {
-    const user = await this.usersService.findByEmail(email);
-    if (user && (await bcrypt.compare(pass, user.password))) {
-      const { password, ...result } = user;
-      return result;
-    }
-    return null;
-  }
+  async login(email: string, password: string): Promise<AuthEntity> {
+    // Step 1: Fetch a user with the given email
+    const user = await this.prisma.user.findUnique({ where: { email: email } });
 
-  async login(user: any) {
-    const payload = {
-      sub: user.id,
-      email: user.email,
-      role: user.role,
-      pseudo: user.pseudo,
-      firstName: user.firstName,
-      lastName: user.lastName,
-    };
+    // If no user is found, throw an error
+    if (!user) {
+      throw new NotFoundException(`No user found for email: ${email}`);
+    }
+
+    // Step 2: Check if the password is correct
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    // If password does not match, throw an error
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid password');
+    }
+
+    // Step 3: Generate a JWT containing the user's ID and return it
     return {
-      access_token: this.jwtService.sign(payload),
+      accessToken: this.jwtService.sign({ userId: user.id }),
     };
   }
 }

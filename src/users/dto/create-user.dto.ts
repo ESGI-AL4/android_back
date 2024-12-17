@@ -1,6 +1,6 @@
 // src/users/dto/create-user.dto.ts
 
-import { IsEmail, IsNotEmpty, MinLength, IsOptional } from 'class-validator';
+import { IsEmail, IsNotEmpty, MinLength, IsOptional, IsIn, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateUserDto {
@@ -24,5 +24,11 @@ export class CreateUserDto {
   @ApiProperty()
   @MinLength(6)
   @IsNotEmpty()
+  @IsString()
   password: string;
+
+  @ApiProperty({ required: false, enum: ['user', 'admin'] })
+  @IsOptional()
+  @IsIn(['user', 'admin', 'superadmin'])
+  role?: string;
 }

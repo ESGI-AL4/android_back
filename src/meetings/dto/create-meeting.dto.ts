@@ -17,7 +17,7 @@ export class CreateMeetingDto {
   @ApiProperty()
   @IsDateString()
   @IsNotEmpty()
-  date: Date;
+  date: string;
 
   @ApiProperty({ required: false })
   @IsString()

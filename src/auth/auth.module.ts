@@ -2,21 +2,27 @@
 
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { UsersModule } from '../tables/users/users.module';
+import { UsersModule } from '../users/users.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
+import { AuthController } from './auth.controller';
+import { PrismaModule } from '../prisma/prisma.module';
+import * as process from 'process';
+
+export const jwtSecret = process.env.JWT_SECRET
 
 @Module({
   imports: [
-    UsersModule,
+    PrismaModule,
     PassportModule,
     JwtModule.register({
-      secret: 'votre_cle_secrete', // Utilisez une variable d'environnement en production
-      signOptions: { expiresIn: '3600s' },
+      secret: jwtSecret, // Utilisez une variable d'environnement en production
+      signOptions: { expiresIn: '5m' },
     }),
+    UsersModule,
   ],
+  controllers: [AuthController],
   providers: [AuthService, JwtStrategy],
-  exports: [AuthService],
 })
 export class AuthModule {}

@@ -9,8 +9,8 @@ import {
   Body,
 } from '@nestjs/common';
 import { RegistrationsService } from './registrations.service';
-import { CreateRegistrationDto } from '../../DTO/registration/create-registration.dto';
-import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
+import { CreateRegistrationDto } from './dto/create-registration.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('registrations')
