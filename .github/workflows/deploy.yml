@@ -23,7 +23,7 @@ jobs:
         run: npm cache clean --force
 
       - name: Install dependencies
-        run: npm i
+        run: npm ci
 
       - name: Run Build
         run: npm run build
@@ -50,6 +50,8 @@ jobs:
             git clone https://github.com/ESGI-AL4/android_back.git /image/android_back
             cd /image/android_back
             cp ../env/android_back/.env .env
+            npx prisma migrate dev
+            npx prisma generate
             docker stop android_back-api-server
             docker system prune -af --volumes
             docker compose -f "docker-compose.prod.yaml" up -d --build
