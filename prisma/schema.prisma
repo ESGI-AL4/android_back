@@ -55,3 +55,20 @@ model Registration {
 
   @@unique([userId, meetingId])
 }
+
+enum NewsCategory {
+  PRESSE
+  TECHNOLOGIE
+  ECONOMIE
+}
+
+model News {
+  id          Int       @id @default(autoincrement())
+  title       String
+  body        String
+  image       String?
+  author      String
+  publishedAt DateTime  @default(now())
+  category    NewsCategory
+  link        String    @unique
+}
