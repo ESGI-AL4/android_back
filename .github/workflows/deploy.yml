@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - develop
   pull_request:
 
 jobs:
@@ -16,7 +17,10 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '21'
+
+      - name: Clean npm cache
+        run: npm cache clean --force
 
       - name: Install dependencies
         run: npm ci
@@ -34,7 +38,6 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Deploy to VPS
-        if: github.ref == 'refs/heads/main'
         uses: appleboy/ssh-action@v0.1.5
         with:
           host: ${{ secrets.VPS_IP }}
@@ -47,6 +50,8 @@ jobs:
             git clone https://github.com/ESGI-AL4/android_back.git /image/android_back
             cd /image/android_back
             cp ../env/android_back/.env .env
+            npx prisma migrate dev
+            npx prisma generate
             docker stop android_back-api-server
             docker system prune -af --volumes
             docker compose -f "docker-compose.prod.yaml" up -d --build
