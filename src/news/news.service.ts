@@ -9,16 +9,17 @@ import { UpdateNewsDto } from './dto/update-news.dto';
 @Injectable()
 export class NewsService {
   private readonly logger = new Logger(NewsService.name);
-  private readonly rssParser: Parser = new Parser();
 
   constructor(private readonly prisma: PrismaService) {}
+
 
   // Fonction générique pour récupérer un flux RSS et enregistrer les articles,
   // en évitant les doublons grâce à un upsert basé sur le guid (ou le lien)
   async fetchAndStoreFeed(url: string, category: NewsCategory): Promise<void> {
+    const rssParser = new Parser();
     try {
       this.logger.log(`Récupération du flux pour la catégorie ${category} depuis ${url}`);
-      const feed = await this.rssParser.parseURL(url);
+      const feed = await rssParser.parseURL(url);
       for (const item of feed.items) {
         // On utilise item.guid ou, à défaut, item.link comme identifiant unique
         const uniqueId = item.guid || item.link;
