@@ -100,4 +100,11 @@ export class CryptoPriceService {
     }
   }
 
+  // Récupère l'historique des prix d'une crypto donnée, trié par date décroissante
+  async getCryptoHistory(crypto: string): Promise<any[]> {
+    return this.prisma.cryptoPriceHistory.findMany({
+      where: { crypto },
+      orderBy: { fetchedAt: 'desc' },
+    });
+  }
 }

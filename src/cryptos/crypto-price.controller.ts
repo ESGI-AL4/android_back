@@ -49,4 +49,11 @@ export class CryptoPriceController {
   async getTrackedCryptos() {
     return await this.cryptoPriceService.getTrackedCryptos();
   }
+
+  // Route pour récupérer l'historique d'une crypto
+  @Get('history/:crypto')
+  @ApiOkResponse({ description: "Historique des prix de la crypto." })
+  async getCryptoHistory(@Param('crypto') crypto: string) {
+    return await this.cryptoPriceService.getCryptoHistory(crypto);
+  }
 }
