@@ -1,10 +1,11 @@
 import { Controller, Post, Put, Delete, Get, Body, Param } from '@nestjs/common';
 import { ApiTags, ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
 import { CryptoPriceService } from './crypto-price.service';
+import { CreateCryptoDto } from './dto/create-crypto.dto';
 import { UpdateCryptoDto } from './dto/update-crypto.dto';
 
 @ApiTags('cryptos')
-@Controller('crypto-prices')
+@Controller('cryptos')
 export class CryptoPriceController {
   constructor(private readonly cryptoPriceService: CryptoPriceService) {}
 
@@ -17,10 +18,12 @@ export class CryptoPriceController {
 
   @Post('add')
   @ApiCreatedResponse({ description: 'Crypto ajoutée au suivi.' })
-  async addCrypto(
-    @Body() body: { crypto: string; fullName: string; coinId: string }
-  ) {
-    const record = await this.cryptoPriceService.addCrypto(body.crypto, body.fullName, body.coinId);
+  async addCrypto(@Body() createCryptoDto: CreateCryptoDto) {
+    const record = await this.cryptoPriceService.addCrypto(
+      createCryptoDto.crypto,
+      createCryptoDto.fullName,
+      createCryptoDto.coinId,
+    );
     return { message: 'Crypto ajoutée au suivi', record };
   }
 
