@@ -1,11 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
-// schema.prisma
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -27,6 +19,7 @@ model User {
   updatedAt     DateTime       @updatedAt
   registrations Registration[]
   meetings      Meeting[]      @relation("UserMeetings")
+  wallet        Wallet?        // Relation optionnelle (un seul wallet par utilisateur)
 }
 
 model Meeting {
@@ -71,4 +64,45 @@ model News {
   publishedAt DateTime  @default(now())
   category    NewsCategory
   link        String    @unique
+}
+
+// --- Portefeuille et positions ---
+
+model Wallet {
+  id          Int             @id @default(autoincrement())
+  userId      Int             @unique
+  totalValue  Float           // Valeur totale actuelle du portefeuille
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  positions   WalletPosition[]
+  user        User            @relation(fields: [userId], references: [id])
+}
+
+model WalletPosition {
+  id            Int      @id @default(autoincrement())
+  walletId      Int
+  cryptoSymbol  String   // Par exemple "BTC", "ETH"
+  quantity      Float    // Quantité détenue
+  purchasePrice Float    // Prix d'achat unitaire
+  wallet        Wallet   @relation(fields: [walletId], references: [id])
+}
+
+// --- Cryptos et historique des prix ---
+
+model CurrentCryptoPrice {
+  id        Int      @id @default(autoincrement())
+  crypto    String   @unique  // Symbole, ex: "BTC"
+  fullName  String   // Nom complet, ex: "Bitcoin"
+  coinId    String   // Identifiant CoinGecko, ex: "bitcoin"
+  price     Float    // Prix actuel
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model CryptoPriceHistory {
+  id        Int      @id @default(autoincrement())
+  crypto    String   // Symbole, ex: "BTC"
+  fullName  String?  // Nom complet (optionnel)
+  coinId    String?  // Identifiant CoinGecko (optionnel)
+  price     Float    // Prix relevé
+  fetchedAt DateTime @default(now())
 }
