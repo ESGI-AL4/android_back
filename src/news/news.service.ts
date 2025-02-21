@@ -2,23 +2,24 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { NewsCategory } from '@prisma/client';
-import Parser from 'rss-parser';
+import * as Parser from "rss-parser";
 import { CreateNewsDto } from './dto/create-news.dto';
 import { UpdateNewsDto } from './dto/update-news.dto';
 
 @Injectable()
 export class NewsService {
   private readonly logger = new Logger(NewsService.name);
-  private readonly rssParser: Parser = new Parser();
 
   constructor(private readonly prisma: PrismaService) {}
+
 
   // Fonction générique pour récupérer un flux RSS et enregistrer les articles,
   // en évitant les doublons grâce à un upsert basé sur le guid (ou le lien)
   async fetchAndStoreFeed(url: string, category: NewsCategory): Promise<void> {
+    const rssParser: Parser = new Parser({});
     try {
       this.logger.log(`Récupération du flux pour la catégorie ${category} depuis ${url}`);
-      const feed = await this.rssParser.parseURL(url);
+      const feed = await rssParser.parseURL(url);
       for (const item of feed.items) {
         // On utilise item.guid ou, à défaut, item.link comme identifiant unique
         const uniqueId = item.guid || item.link;
@@ -48,11 +49,13 @@ export class NewsService {
   // Fonction pour récupérer tous les flux RSS
   async fetchAllFeeds(): Promise<void> {
     const feeds = [
-      { category: NewsCategory.PRESSE, url: 'https://www.lemonde.fr/cryptomonnaies/rss_full.xml' },
-      { category: NewsCategory.TECHNOLOGIE, url: 'https://cryptoast.fr/actu/blockchain/feed/' },
-      { category: NewsCategory.ECONOMIE, url: 'https://www.journaldutoken.com/feed/' },
+      { category: NewsCategory.PRESSE, url: 'https://www.bfmtv.com/rss/crypto/' },
+      { category: NewsCategory.TECHNOLOGIE, url: 'https://feeds.feedburner.com/cointelegraph/D5WV9mOkbNy' },
+      { category: NewsCategory.ECONOMIE, url: 'https://feeds.feedburner.com/cointelegraph/5fFlqsWPfBy' },
     ];
-    await Promise.all(feeds.map(feed => this.fetchAndStoreFeed(feed.url, feed.category)));
+    for (const feed of feeds) {
+      await this.fetchAndStoreFeed(feed.url, feed.category);
+    }
   }
 
   // Cron job : récupère automatiquement tous les flux à minuit chaque jour
