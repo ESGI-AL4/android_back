@@ -1,22 +1,22 @@
-import { Controller, Post, Delete, Body, Param, Put } from '@nestjs/common';
+import { Controller, Post, Put, Delete, Get, Body, Param } from '@nestjs/common';
+import { ApiTags, ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
 import { CryptoPriceService } from './crypto-price.service';
-import { ApiTags } from '@nestjs/swagger';
 import { UpdateCryptoDto } from './dto/update-crypto.dto';
 
-@ApiTags('crypto-prices')
+@ApiTags('cryptos')
 @Controller('crypto-prices')
 export class CryptoPriceController {
   constructor(private readonly cryptoPriceService: CryptoPriceService) {}
 
-  // Endpoint pour déclencher manuellement la mise à jour des prix
   @Post('update')
+  @ApiOkResponse({ description: 'Mise à jour manuelle des prix effectuée.' })
   async updatePrices() {
     await this.cryptoPriceService.triggerPriceUpdate();
     return { message: 'Mise à jour manuelle des prix effectuée.' };
   }
 
-  // Ajout d'une crypto au suivi
   @Post('add')
+  @ApiCreatedResponse({ description: 'Crypto ajoutée au suivi.' })
   async addCrypto(
     @Body() body: { crypto: string; fullName: string; coinId: string }
   ) {
@@ -24,20 +24,26 @@ export class CryptoPriceController {
     return { message: 'Crypto ajoutée au suivi', record };
   }
 
-  // Suppression d'une crypto du suivi (et suppression de l'historique associé)
   @Delete('remove/:crypto')
+  @ApiOkResponse({ description: 'Crypto supprimée du suivi.' })
   async removeCrypto(@Param('crypto') crypto: string) {
     await this.cryptoPriceService.removeCrypto(crypto);
     return { message: `Crypto ${crypto} supprimée du suivi` };
   }
 
-  // Endpoint pour mettre à jour une crypto existante
   @Put(':crypto')
+  @ApiOkResponse({ description: 'Crypto mise à jour.' })
   async updateCrypto(
     @Param('crypto') crypto: string,
     @Body() updateCryptoDto: UpdateCryptoDto,
   ) {
     const updatedRecord = await this.cryptoPriceService.updateCrypto(crypto, updateCryptoDto);
     return { message: `Crypto ${crypto} mise à jour`, record: updatedRecord };
+  }
+
+  @Get()
+  @ApiOkResponse({ description: 'Liste des cryptos suivies.' })
+  async getTrackedCryptos() {
+    return await this.cryptoPriceService.getTrackedCryptos();
   }
 }
