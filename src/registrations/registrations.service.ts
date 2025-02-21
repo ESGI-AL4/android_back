@@ -25,6 +25,13 @@ export class RegistrationsService {
     }
   }
 
+  async findRegistrationsByUserId(userId: number): Promise<any[]> {
+    return this.prisma.registration.findMany({
+      where: { userId },
+      include: { meeting: true },
+    });
+  }
+
   async remove(meetingId: number, userId: number) {
     const registration = await this.prisma.registration.findUnique({
       where: {

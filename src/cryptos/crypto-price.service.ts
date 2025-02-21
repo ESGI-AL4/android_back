@@ -12,10 +12,46 @@ export class CryptoPriceService {
   }
 
   // Ajoute une crypto au suivi (création dans la table CurrentCryptoPrice)
+  // + Récupération et insertion de l'historique de 90 jours dans CryptoPriceHistory
   async addCrypto(crypto: string, fullName: string, coinId: string): Promise<any> {
-    return this.prisma.currentCryptoPrice.create({
+    const record = await this.prisma.currentCryptoPrice.create({
       data: { crypto, fullName, coinId, price: 0 },
     });
+
+    try {
+      const url = `https://api.coingecko.com/api/v3/coins/${coinId}/market_chart?vs_currency=usd&days=90`;
+      const response = await axios.get(url);
+      const data = response.data; // data.prices, data.market_caps, data.total_volumes, etc.
+
+      if (data && data.prices) {
+        const historyEntries = data.prices.map((item: [number, number]) => {
+          const [timestamp, price] = item;
+          return {
+            crypto,
+            fullName,
+            coinId,
+            price,
+            fetchedAt: new Date(timestamp),
+          };
+        });
+
+        // 4) Insertion en masse dans CryptoPriceHistory
+        await this.prisma.cryptoPriceHistory.createMany({
+          data: historyEntries,
+        });
+
+        this.logger.log(
+          `Historique de 90 jours inséré pour ${crypto} (environ ${historyEntries.length} points).`
+        );
+      }
+    } catch (error) {
+      this.logger.error(
+        `Erreur lors de la récupération de l'historique pour ${crypto} / ${coinId}`,
+        error
+      );
+    }
+
+    return record;
   }
 
   // Supprime une crypto du suivi (supprime aussi son historique)

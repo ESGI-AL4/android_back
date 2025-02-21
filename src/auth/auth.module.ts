@@ -8,15 +8,16 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
 import { AuthController } from './auth.controller';
 import { PrismaModule } from '../prisma/prisma.module';
+import * as process from 'node:process';
 
-export const jwtSecret = "11111111111111"
+export const jwtSecret = process.env.JWT_SECRET
 
 @Module({
   imports: [
     PrismaModule,
     PassportModule,
     JwtModule.register({
-      secret: jwtSecret, // Utilisez une variable d'environnement en production
+      secret: jwtSecret,
       signOptions: { expiresIn: '24h' },
     }),
     UsersModule,
