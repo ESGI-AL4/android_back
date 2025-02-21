@@ -8,9 +8,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
 import { AuthController } from './auth.controller';
 import { PrismaModule } from '../prisma/prisma.module';
-import * as process from 'process';
 
-export const jwtSecret = process.env.JWT_SECRET
+export const jwtSecret = "11111111111111"
 
 @Module({
   imports: [
