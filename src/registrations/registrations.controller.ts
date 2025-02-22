@@ -27,6 +27,17 @@ export class RegistrationsController {
     return this.registrationsService.create(createRegistrationDto, req.user.id);
   }
 
+  // Route protégée qui retourne les meetings auxquels l'utilisateur authentifié est inscrit
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @Get('profile')
+  @ApiOkResponse({ description: "Liste des meetings auxquels l'utilisateur authentifié est inscrit." })
+  async getRegistrationsForProfile(@Req() req: any) {
+    const userId = req.user.id;
+    const registrations = await this.registrationsService.findRegistrationsByUserId(userId);
+    return registrations.map(registration => registration.meeting);
+  }
+
   @Get('user/:userId')
   @ApiOkResponse({ description: "Liste des meetings auxquels l'utilisateur est inscrit." })
   async getMeetingsForUser(@Param('userId', ParseIntPipe) userId: number) {

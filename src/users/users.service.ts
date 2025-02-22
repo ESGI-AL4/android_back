@@ -37,9 +37,15 @@ export class UsersService {
     const userProfile = await this.prisma.user.findUnique({
       where: { id: userId },
       include: {
+        meetings: true, // Meetings créés par l'utilisateur
         wallet: {
           include: {
             positions: true,
+          },
+        },
+        registrations: {
+          include: {
+            meeting: true, // Inclusions des meetings liés aux inscriptions
           },
         },
       },
