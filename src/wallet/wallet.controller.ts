@@ -1,9 +1,10 @@
-import { Controller, Post, Put, Delete, Get, Param, Body } from '@nestjs/common';
-import { ApiTags, ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
+import { Controller, Post, Put, Delete, Get, Param, Body, UseGuards, Req } from '@nestjs/common';
+import { ApiTags, ApiCreatedResponse, ApiOkResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { WalletService } from './wallet.service';
 import { CreateWalletDto } from './dto/create-wallet.dto';
 import { CreateWalletPositionDto } from './dto/create-wallet-position.dto';
 import { UpdateWalletPositionDto } from './dto/update-wallet-position.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @ApiTags('wallets')
 @Controller('wallets')
@@ -13,6 +14,16 @@ export class WalletController {
   @Post()
   @ApiCreatedResponse({ description: 'Portefeuille créé.' })
   async createWallet(@Body() createWalletDto: CreateWalletDto) {
+    return this.walletService.createWallet(createWalletDto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @Post('profile')
+  @ApiCreatedResponse({ description: "Portefeuille créé en utilisant l'ID de l'utilisateur issu du token JWT." })
+  async createWalletFromToken(@Req() req: any) {
+    const userId = req.user.id;
+    const createWalletDto: CreateWalletDto = { userId };
     return this.walletService.createWallet(createWalletDto);
   }
 
