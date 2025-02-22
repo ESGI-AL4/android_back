@@ -43,7 +43,7 @@ export class UsersController {
   @ApiBearerAuth()
   @Get('profile')
   async getProfile(@Req() req: any) {
-    return this.usersService.findOne(req.user.userId);
+    return this.usersService.getProfileWithWallet(req.user.id);
   }
 
   @Get(':id')

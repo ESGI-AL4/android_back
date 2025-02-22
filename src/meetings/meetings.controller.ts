@@ -26,7 +26,7 @@ export class MeetingsController {
   @ApiBearerAuth()
   @Post()
   create(@Body() createMeetingDto: CreateMeetingDto, @Req() req: any) {
-    return this.meetingsService.create(createMeetingDto, req.user.userId);
+    return this.meetingsService.create(createMeetingDto, req.user.id);
   }
 
   @Get()
@@ -47,13 +47,13 @@ export class MeetingsController {
     @Body() updateMeetingDto: UpdateMeetingDto,
     @Req() req: any,
   ) {
-    return this.meetingsService.update(+id, updateMeetingDto, req.user.userId);
+    return this.meetingsService.update(+id, updateMeetingDto, req.user.id);
   }
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @Delete(':id')
   remove(@Param('id') id: string, @Req() req: any) {
-    return this.meetingsService.remove(+id, req.user.userId);
+    return this.meetingsService.remove(+id, req.user.id);
   }
 }

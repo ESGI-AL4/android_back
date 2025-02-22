@@ -24,7 +24,7 @@ export class RegistrationsController {
   @ApiBearerAuth()
   @Post()
   create(@Body() createRegistrationDto: CreateRegistrationDto, @Req() req: any) {
-    return this.registrationsService.create(createRegistrationDto, req.user.userId);
+    return this.registrationsService.create(createRegistrationDto, req.user.id);
   }
 
   @Get('user/:userId')
@@ -38,6 +38,6 @@ export class RegistrationsController {
   @ApiBearerAuth()
   @Delete()
   remove(@Body() createRegistrationDto: CreateRegistrationDto, @Req() req: any) {
-    return this.registrationsService.remove(createRegistrationDto.meetingId, req.user.userId);
+    return this.registrationsService.remove(createRegistrationDto.meetingId, req.user.id);
   }
 }

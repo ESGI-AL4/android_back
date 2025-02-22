@@ -33,6 +33,23 @@ export class UsersService {
     });
   }
 
+  async getProfileWithWallet(userId: number) {
+    const userProfile = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        wallet: {
+          include: {
+            positions: true,
+          },
+        },
+      },
+    });
+    if (!userProfile) {
+      throw new NotFoundException('Utilisateur non trouvé');
+    }
+    return userProfile;
+  }
+
   findOne(id: number) {
     return this.prisma.user.findUnique({
       where: { id }
