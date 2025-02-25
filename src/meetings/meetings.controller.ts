@@ -22,6 +22,8 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 export class MeetingsController {
   constructor(private readonly meetingsService: MeetingsService) {}
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Post()
   create(@Body() createMeetingDto: CreateMeetingDto, @Req() req: any) {
     return this.meetingsService.create(createMeetingDto, req.user.id);
